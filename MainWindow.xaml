@@ -1,0 +1,53 @@
+﻿<Window x:Class="SatelliteDataScripter.MainWindow"
+        x:Name="MainWindowReference" 
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:satelliteDataScripter="clr-namespace:SatelliteDataScripter" 
+        Title="Satellite Data Scripter" Height="500" Width="800"
+        Focusable="False" Icon="/SatelliteDataScripter;component/Database-Run.ico" 
+        Loaded="MainWindow_Loaded">
+    
+    <Grid Margin="5">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="5" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="5" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="5" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <ComboBox x:Name="ConnectionsComboBox" HorizontalAlignment="Stretch" ItemsSource="{Binding Connections, Mode=OneTime}" SelectedItem="{Binding SelectedConnection}" />
+
+        <ComboBox Grid.Column="2" HorizontalAlignment="Stretch" ItemsSource="{Binding SelectedConnection.Schemas, Mode=OneWay}" SelectedItem="{Binding SelectedSchema}" IsEditable="True" />
+
+        <ComboBox Grid.Column="4" HorizontalAlignment="Stretch" ItemsSource="{Binding SelectedSchema.Tables, Mode=OneWay}" SelectedItem="{Binding SelectedTable}" IsEditable="True" />
+
+        <Button Grid.Column="6" Content="Generate &amp; Copy" Padding="15,1" IsDefault="True" IsEnabled="{Binding IsTableSelected}" Click="GenerateButton_Click" />
+        
+        <Expander Grid.Row="1" Grid.ColumnSpan="7" Header="Columns" IsExpanded="False" Margin="0,5">
+            <ListBox Height="150" ItemsSource="{Binding SelectedTable.NonIdColumns, Mode=OneWay}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate DataType="satelliteDataScripter:Column">
+                        <CheckBox Content="{Binding Name}" IsChecked="{Binding Generate, Mode=TwoWay}" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Expander>
+
+        <TextBox Grid.Row="2" Grid.ColumnSpan="7" x:Name="ScriptTextBox" Margin="0,0,0,5"  FontFamily="Consolas" FontSize="12" IsReadOnly="True" 
+                 VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" BorderBrush="Gray" FocusManager.IsFocusScope="True" />
+        
+        <StackPanel Grid.Row="4" Grid.ColumnSpan="7" Orientation="Horizontal">
+            <CheckBox Content="Generate update statements" IsChecked="{Binding GenerateUpdateStatements, Mode=TwoWay}" Margin="0,0,20,0" VerticalAlignment="Center" />
+            <CheckBox Content="Update only if data is changed" IsChecked="{Binding UpdateOnlyIfDataIsChanged, Mode=TwoWay}" IsEnabled="{Binding IsUpdateOnlyIfDataIsChangedCheckboxEnabled}" VerticalAlignment="Center" />
+        </StackPanel>
+    </Grid>
+</Window>
